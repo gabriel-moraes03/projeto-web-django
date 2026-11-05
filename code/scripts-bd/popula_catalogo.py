@@ -91,18 +91,18 @@ def popular_catalogo():
             Faixa.objects.get_or_create(
                 album=album,
                 numero=num,
-                defaults={"titulo": f"{dados['titulo']} - Faixa {num}", "duracao": 180 + num * 25}
+                defaults={"titulo": f"{dados['titulo']} - Faixa {num}", "duracao_segundos": 180 + num * 25}
             )
 
         # Cria 2 formatos por álbum (atenção às choices exatas de 'formato' no seu models.py!)
         Produto.objects.get_or_create(
             album=album,
-            formato="CD",
+            formato="cd",
             defaults={"preco": Decimal("49.90"), "estoque": 15, "ativo": True}
         )
         Produto.objects.get_or_create(
             album=album,
-            formato="VINIL",  # Confira se na choice do model é 'VINIL', 'vinil' ou 'LP'
+            formato="vinil",  # Confira se na choice do model é 'VINIL', 'vinil' ou 'LP'
             defaults={"preco": Decimal("149.90"), "estoque": 5, "ativo": True}
         )
 

@@ -10,6 +10,25 @@ Trabalho prático da disciplina GAC116 - Programação Web da Universidade Feder
 * Arthur Catarino Oliveira
 * Luiz Felipe de Souza Marques
 
+## Tecnologias Utilizadas
+
+* Python 3 e Django 6 (arquitetura MVT)
+* SQLite (banco de dados relacional)
+* Bootstrap 5.3 e FontAwesome (interface responsiva, com tema claro e escuro)
+* Django Jazzmin (tema do ambiente administrativo)
+* SeaweedFS (armazenamento das imagens, via API S3) com django-storages e boto3
+* Docker Compose, WhiteNoise, Pillow e python-dotenv
+* Git e GitHub
+
+## Principais Funcionalidades
+
+* Catálogo de álbuns com artistas, gêneros, gravadoras, faixas e capas
+* Venda do mesmo álbum em vários formatos (CD, vinil e digital), cada um com preço e estoque próprios
+* Carrinho, pedidos com status e avaliações de álbuns
+* Perfis de cliente e gerente, com permissões distintas
+* Ambiente administrativo com filtros e busca para todas as entidades
+* Cadastro, login e logout, catálogo, carrinho e pedidos para o cliente (previstos para o Checkpoint 2)
+
 ## Instalação e Execução
 
 A aplicação roda localmente e somente o SeaweedFS, que armazena as imagens, roda no Docker. Antes de começar, abra o Docker Desktop.
