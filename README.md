@@ -58,3 +58,29 @@ python3 manage.py runserver
 ```
 
 Acesse no navegador a página [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+## Armazenamento de Imagens com SeaweedFS
+
+A aplicação roda localmente e somente o SeaweedFS roda no Docker. Com o ambiente virtual ativo, na pasta `code`, crie o arquivo de configuração a partir do exemplo:
+
+```bash
+cp env_sample.conf env.conf
+```
+
+Suba o SeaweedFS (antes é necessário abrir o Docker Desktop):
+
+```bash
+docker compose up -d
+```
+
+Crie o bucket onde as imagens serão armazenadas:
+
+```bash
+python3 scripts-bd/cria_bucket.py
+```
+
+Depois, execute a aplicação normalmente com `python3 manage.py runserver`. O SeaweedFS (S3) fica disponível em [http://localhost:8333](http://localhost:8333).
+
+**Atenção:** As chaves de `env_sample.conf` e `seaweedfs/s3.json` são apenas para desenvolvimento. O arquivo `env.conf` não deve ser versionado.
+
+Para voltar ao armazenamento local, defina `USAR_SEAWEEDFS=False` no arquivo `env.conf` e reinicie a aplicação. As imagens passam a ser salvas na pasta `media`.
