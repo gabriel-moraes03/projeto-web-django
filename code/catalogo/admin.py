@@ -42,7 +42,7 @@ admin.site.register(Gravadora, GravadoraAdmin)
 admin.site.register(Album, AlbumAdmin)
 
 class FaixaAdmin(admin.ModelAdmin):
-    list_display = ('album', 'numero', 'titulo', 'duracao')
+    list_display = ('album', 'numero', 'titulo', 'duracao_segundos')
     list_filter = ('album',)
     search_fields = ('titulo', 'album__titulo')
     ordering = ('album', 'numero')
@@ -56,9 +56,9 @@ class ProdutoAdmin(admin.ModelAdmin):
 
 
 class AvaliacaoAdmin(admin.ModelAdmin):
-    list_display = ('album', 'usuario', 'nota', 'data')
-    list_filter = ('nota', 'data')
-    search_fields = ('album__titulo', 'usuario__username')
+    list_display = ('album', 'user', 'nota', 'criado_em')
+    list_filter = ('nota', 'criado_em')
+    search_fields = ('album__titulo', 'user__username')
 
 admin.site.register(Faixa, FaixaAdmin)
 admin.site.register(Produto, ProdutoAdmin)
