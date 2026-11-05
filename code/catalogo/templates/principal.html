@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - Início{% endblock %}
+
+{% block conteudo %}
+<section class="hero text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Acervo Sonoro</h1>
+        <p class="lead">Loja virtual de CDs e álbuns musicais. Encontre o disco que faltava na sua coleção.</p>
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center card-destaque">
+                <div class="card-body">
+                    <i class="fa-solid fa-record-vinyl icone-destaque"></i>
+                    <h2 class="h5 card-title">Catálogo</h2>
+                    <p class="card-text">Navegue por artistas, gêneros e álbuns em CD, vinil e digital.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center card-destaque">
+                <div class="card-body">
+                    <i class="fa-solid fa-cart-shopping icone-destaque"></i>
+                    <h2 class="h5 card-title">Carrinho e pedidos</h2>
+                    <p class="card-text">Monte seu carrinho, finalize a compra e acompanhe seus pedidos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center card-destaque">
+                <div class="card-body">
+                    <i class="fa-solid fa-star icone-destaque"></i>
+                    <h2 class="h5 card-title">Avaliações</h2>
+                    <p class="card-text">Dê sua nota aos álbuns e veja a opinião de outros clientes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
