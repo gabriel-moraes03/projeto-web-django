@@ -84,3 +84,25 @@ Depois, execute a aplicação normalmente com `python3 manage.py runserver`. O S
 **Atenção:** As chaves de `env_sample.conf` e `seaweedfs/s3.json` são apenas para desenvolvimento. O arquivo `env.conf` não deve ser versionado.
 
 Para voltar ao armazenamento local, defina `USAR_SEAWEEDFS=False` no arquivo `env.conf` e reinicie a aplicação. As imagens passam a ser salvas na pasta `media`.
+
+## Estrutura do projeto
+
+```text
+projeto-web-django/
+├── README.md
+├── docs/
+├── recursos/
+└── code/
+    ├── manage.py
+    ├── requirements.txt
+    ├── docker-compose.yml
+    ├── env_sample.conf
+    ├── seaweedfs/
+    ├── scripts-bd/
+    ├── static/
+    ├── templates/
+    ├── acervo_sonoro/
+    ├── usuarios/
+    ├── catalogo/
+    └── vendas/
+```

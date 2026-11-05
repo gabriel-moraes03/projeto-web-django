@@ -15,6 +15,8 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
+    # o jazzmin precisa vir antes do admin para substituir os templates dele
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -125,3 +127,35 @@ if USAR_SEAWEEDFS:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/auth/login'
+
+JAZZMIN_SETTINGS = {
+    'site_title': 'Acervo Sonoro',
+    'site_header': 'Acervo Sonoro',
+    'site_brand': 'Acervo Sonoro',
+    'welcome_sign': 'Bem-vindo ao ambiente de gestão da loja Acervo Sonoro',
+    'copyright': 'Acervo Sonoro - Loja de CDs e Álbuns',
+    'icons': {
+        'auth.User': 'fas fa-user',
+        'auth.Group': 'fas fa-users',
+        'usuarios.Perfil': 'fas fa-id-card',
+        'usuarios.Endereco': 'fas fa-map-marker-alt',
+        'catalogo.Artista': 'fas fa-microphone',
+        'catalogo.Genero': 'fas fa-tags',
+        'catalogo.Gravadora': 'fas fa-building',
+        'catalogo.Album': 'fas fa-compact-disc',
+        'catalogo.Faixa': 'fas fa-music',
+        'catalogo.Produto': 'fas fa-box',
+        'catalogo.Avaliacao': 'fas fa-star',
+        'vendas.Carrinho': 'fas fa-shopping-cart',
+        'vendas.ItemCarrinho': 'fas fa-cart-plus',
+        'vendas.Pedido': 'fas fa-receipt',
+        'vendas.ItemPedido': 'fas fa-list',
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'theme': 'flatly',
+    'dark_mode_theme': 'darkly',
+    'navbar': 'navbar-dark bg-primary',
+    'sidebar': 'sidebar-dark-primary',
+}
