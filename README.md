@@ -7,15 +7,15 @@ Trabalho prático da disciplina GAC116 - Programação Web da Universidade Feder
 ## Integrantes
 
 * Gabriel Moraes de Oliveira
-* (incluir integrante 2)
-* (incluir integrante 3)
+* Arthur Catarino Oliveira
+* Luiz Felipe de Souza Marques
 
 ## Instalação
 
 Clone o repositório:
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/gabriel-moraes03/projeto-web-django.git
 ```
 
 Navegue até a pasta do projeto Django:
