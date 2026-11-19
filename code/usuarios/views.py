@@ -205,6 +205,14 @@ def editar_endereco(request, pk):
         user=request.user
     )
 
+    if endereco.pedido_set.exists():
+        messages.error(
+            request,
+            "Este endereço não pode ser editado porque está vinculado a um pedido."
+        )
+
+        return redirect("enderecos_lista")
+
     if request.method == "POST":
         formulario = EnderecoForm(
             request.POST,
