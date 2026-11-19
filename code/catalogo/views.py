@@ -1,7 +1,12 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg, Exists, F, Min, OuterRef, Q
-from django.views.generic import ListView, TemplateView
+from django.shortcuts import get_object_or_404, redirect
+from django.views import View
+from django.views.generic import DetailView, ListView, TemplateView
 
-from .models import Album, Artista, Genero, Produto
+from .forms import AvaliacaoForm
+from .models import Album, Artista, Avaliacao, Genero, Produto
 
 
 def albuns_com_resumo():
@@ -74,3 +79,47 @@ class AlbumListView(ListView):
         parametros.pop("page", None)
         contexto["querystring"] = parametros.urlencode()
         return contexto
+
+
+class AlbumDetailView(DetailView):
+    template_name = "album_detalhe.html"
+    context_object_name = "album"
+    queryset = Album.objects.select_related("artista", "gravadora").prefetch_related(
+        "generos", "faixas"
+    )
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        album = self.object
+        contexto["produtos"] = album.produtos.filter(ativo=True).order_by("preco")
+        contexto["avaliacoes"] = album.avaliacoes.select_related("user").order_by("-criado_em")
+        contexto["nota_media"] = album.avaliacoes.aggregate(media=Avg("nota"))["media"]
+        if self.request.user.is_authenticated:
+            minha_avaliacao = album.avaliacoes.filter(user=self.request.user).first()
+            contexto["minha_avaliacao"] = minha_avaliacao
+            contexto["form_avaliacao"] = AvaliacaoForm(instance=minha_avaliacao)
+        return contexto
+
+
+class AvaliarView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        album = get_object_or_404(Album, pk=pk)
+        minha_avaliacao = Avaliacao.objects.filter(user=request.user, album=album).first()
+        form = AvaliacaoForm(request.POST, instance=minha_avaliacao)
+        if form.is_valid():
+            avaliacao = form.save(commit=False)
+            avaliacao.user = request.user
+            avaliacao.album = album
+            avaliacao.save()
+            messages.success(request, "Avaliação salva.")
+        else:
+            messages.error(request, "Não foi possível salvar: informe uma nota de 1 a 5.")
+        return redirect("album_detalhe", pk=album.pk)
+
+
+class ExcluirAvaliacaoView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        album = get_object_or_404(Album, pk=pk)
+        Avaliacao.objects.filter(user=request.user, album=album).delete()
+        messages.success(request, "Avaliação removida.")
+        return redirect("album_detalhe", pk=album.pk)

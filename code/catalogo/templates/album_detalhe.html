@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - {{ album.titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/albuns/">Álbuns</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ album.titulo }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            {% if album.capa %}
+                <img src="{{ album.capa.url }}" class="img-fluid rounded capa-album" alt="Capa de {{ album.titulo }}">
+            {% else %}
+                <div class="rounded capa-album capa-vazia d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-compact-disc fa-5x text-body-secondary"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-8">
+            <h1 class="h2 mb-1">{{ album.titulo }}</h1>
+            <p class="lead mb-2">
+                <a href="/albuns/?artista={{ album.artista.pk }}">{{ album.artista.nome }}</a> · {{ album.ano }}
+            </p>
+            <div class="mb-2">
+                {% for genero in album.generos.all %}
+                    <a href="/albuns/?genero={{ genero.pk }}" class="badge text-bg-secondary text-decoration-none">{{ genero.nome }}</a>
+                {% endfor %}
+            </div>
+            {% if album.gravadora %}
+                <p class="text-body-secondary mb-2">Gravadora: {{ album.gravadora.nome }}</p>
+            {% endif %}
+            <p class="mb-3">
+                {% if nota_media is not None %}
+                    <i class="fa-solid fa-star text-warning"></i> {{ nota_media|floatformat:1 }}
+                    <span class="text-body-secondary">({{ avaliacoes|length }} avaliação{{ avaliacoes|length|pluralize:"ões" }})</span>
+                {% else %}
+                    <span class="text-body-secondary">Ainda sem avaliações</span>
+                {% endif %}
+            </p>
+            {% if album.descricao %}
+                <p>{{ album.descricao|linebreaksbr }}</p>
+            {% endif %}
+
+            <h2 class="h4 mt-4">Formatos disponíveis</h2>
+            {% if produtos %}
+                <ul class="list-group">
+                    {% for produto in produtos %}
+                        <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <div>
+                                <strong>{{ produto.get_formato_display }}</strong>
+                                <span class="ms-2">R$ {{ produto.preco|floatformat:2 }}</span>
+                                {% if produto.estoque > 0 %}
+                                    <small class="text-body-secondary ms-2">{{ produto.estoque }} em estoque</small>
+                                {% endif %}
+                            </div>
+                            {% if produto.estoque > 0 %}
+                                {% if user.is_authenticated %}
+                                    <form method="post" action="/carrinho/adicionar/{{ produto.pk }}/">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fa-solid fa-cart-plus"></i> Adicionar ao carrinho
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <a href="/auth/login/?next=/albuns/{{ album.pk }}/" class="btn btn-outline-primary btn-sm">Entre para comprar</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge text-bg-secondary">Esgotado</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-warning">Este álbum não está disponível para compra no momento.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-md-5">
+            <h2 class="h4">Faixas</h2>
+            {% if album.faixas.all %}
+                <ol class="list-group list-group-numbered">
+                    {% for faixa in album.faixas.all %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="ms-2 me-auto">{{ faixa.titulo }}</span>
+                            <span class="text-body-secondary">{{ faixa.duracao_formatada }}</span>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p class="text-body-secondary">Nenhuma faixa cadastrada.</p>
+            {% endif %}
+        </div>
+
+        <div class="col-md-7">
+            <h2 class="h4">Avaliações</h2>
+            {% if user.is_authenticated %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="h6 card-title">{% if minha_avaliacao %}Sua avaliação{% else %}Avalie este álbum{% endif %}</h3>
+                        <form method="post" action="/albuns/{{ album.pk }}/avaliar/">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <label for="{{ form_avaliacao.nota.id_for_label }}" class="form-label">Nota</label>
+                                {{ form_avaliacao.nota }}
+                            </div>
+                            <div class="mb-2">
+                                <label for="{{ form_avaliacao.comentario.id_for_label }}" class="form-label">Comentário</label>
+                                {{ form_avaliacao.comentario }}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Salvar avaliação</button>
+                            {% if minha_avaliacao %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm" formaction="/albuns/{{ album.pk }}/avaliacao/excluir/">Excluir</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <p><a href="/auth/login/?next=/albuns/{{ album.pk }}/">Entre para avaliar este álbum.</a></p>
+            {% endif %}
+
+            {% for avaliacao in avaliacoes %}
+                <div class="border-bottom py-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ avaliacao.user.username }}</strong>
+                        <small class="text-body-secondary">{{ avaliacao.criado_em|date:"d/m/Y" }}</small>
+                    </div>
+                    <div class="text-warning">
+                        {% for i in "12345" %}<i class="fa-{% if forloop.counter <= avaliacao.nota %}solid{% else %}regular{% endif %} fa-star"></i>{% endfor %}
+                    </div>
+                    {% if avaliacao.comentario %}
+                        <p class="mb-0">{{ avaliacao.comentario }}</p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-body-secondary">Nenhuma avaliação ainda.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

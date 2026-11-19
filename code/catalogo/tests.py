@@ -1,9 +1,10 @@
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Album, Artista, Genero, Produto
+from .models import Album, Artista, Avaliacao, Faixa, Genero, Produto
 
 
 class ViewPrincipalTestCase(TestCase):
@@ -96,3 +97,92 @@ class AlbumListViewTestCase(TestCase):
     def test_sem_resultados_mostra_aviso(self):
         resposta = self.client.get(reverse("albuns"), {"q": "inexistente"})
         self.assertContains(resposta, "Nenhum álbum encontrado com esses filtros.")
+
+
+class AlbumDetailViewTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        artista = Artista.objects.create(nome="Pink Floyd")
+        cls.album = Album.objects.create(titulo="Animals", ano=1977, artista=artista)
+        Faixa.objects.create(album=cls.album, numero=1, titulo="Pigs on the Wing", duracao_segundos=185)
+        cls.cd = Produto.objects.create(album=cls.album, formato="cd", preco=Decimal("40.00"), estoque=3)
+        cls.vinil = Produto.objects.create(album=cls.album, formato="vinil", preco=Decimal("120.00"), estoque=0)
+        cls.digital = Produto.objects.create(
+            album=cls.album, formato="digital", preco=Decimal("15.00"), estoque=10, ativo=False
+        )
+        cls.cliente = User.objects.create_user("cliente", password="senha-forte-123")
+        cls.outro = User.objects.create_user("outro", password="senha-forte-123")
+
+    def url_detalhe(self):
+        return reverse("album_detalhe", args=[self.album.pk])
+
+    def url_avaliar(self):
+        return reverse("avaliar", args=[self.album.pk])
+
+    def test_mostra_faixas_e_duracao(self):
+        resposta = self.client.get(self.url_detalhe())
+        self.assertContains(resposta, "Pigs on the Wing")
+        self.assertContains(resposta, "3:05")
+
+    def test_mostra_so_produtos_ativos_e_esgotado(self):
+        resposta = self.client.get(self.url_detalhe())
+        self.assertEqual(list(resposta.context["produtos"]), [self.cd, self.vinil])
+        self.assertNotContains(resposta, "Digital")
+        self.assertContains(resposta, "Esgotado")
+
+    def test_visitante_ve_entre_para_comprar(self):
+        resposta = self.client.get(self.url_detalhe())
+        self.assertContains(resposta, "Entre para comprar")
+        self.assertNotContains(resposta, f"/carrinho/adicionar/{self.cd.pk}/")
+
+    def test_cliente_ve_formulario_do_carrinho(self):
+        self.client.force_login(self.cliente)
+        resposta = self.client.get(self.url_detalhe())
+        self.assertContains(resposta, f'action="/carrinho/adicionar/{self.cd.pk}/"')
+        self.assertNotContains(resposta, "Entre para comprar")
+
+    def test_album_inexistente_da_404(self):
+        resposta = self.client.get(reverse("album_detalhe", args=[9999]))
+        self.assertEqual(resposta.status_code, 404)
+
+    def test_avaliar_exige_login(self):
+        resposta = self.client.post(self.url_avaliar(), {"nota": 5})
+        self.assertRedirects(
+            resposta, f"/auth/login/?next={self.url_avaliar()}", fetch_redirect_response=False
+        )
+        self.assertFalse(Avaliacao.objects.exists())
+
+    def test_criar_e_atualizar_mantem_uma_avaliacao(self):
+        self.client.force_login(self.cliente)
+        resposta = self.client.post(self.url_avaliar(), {"nota": 4, "comentario": "Bom"})
+        self.assertRedirects(resposta, self.url_detalhe())
+        self.client.post(self.url_avaliar(), {"nota": 2, "comentario": "Mudei de ideia"})
+        avaliacoes = Avaliacao.objects.filter(user=self.cliente, album=self.album)
+        self.assertEqual(avaliacoes.count(), 1)
+        self.assertEqual(avaliacoes.get().nota, 2)
+
+    def test_nota_fora_do_intervalo_e_rejeitada(self):
+        self.client.force_login(self.cliente)
+        for nota in [0, 6, "abc"]:
+            self.client.post(self.url_avaliar(), {"nota": nota})
+        self.assertFalse(Avaliacao.objects.exists())
+
+    def test_excluir_remove_so_a_propria(self):
+        Avaliacao.objects.create(user=self.cliente, album=self.album, nota=5)
+        Avaliacao.objects.create(user=self.outro, album=self.album, nota=3)
+        self.client.force_login(self.cliente)
+        resposta = self.client.post(reverse("avaliacao_excluir", args=[self.album.pk]))
+        self.assertRedirects(resposta, self.url_detalhe())
+        self.assertFalse(Avaliacao.objects.filter(user=self.cliente).exists())
+        self.assertTrue(Avaliacao.objects.filter(user=self.outro).exists())
+
+    def test_detalhe_mostra_media_e_formulario_preenchido(self):
+        Avaliacao.objects.create(user=self.cliente, album=self.album, nota=5, comentario="Obra-prima")
+        Avaliacao.objects.create(user=self.outro, album=self.album, nota=2)
+        self.client.force_login(self.cliente)
+        resposta = self.client.get(self.url_detalhe())
+        self.assertEqual(resposta.context["nota_media"], 3.5)
+        self.assertContains(resposta, "3,5")
+        self.assertContains(resposta, "Sua avaliação")
+        self.assertEqual(resposta.context["form_avaliacao"].instance.nota, 5)
+        self.assertContains(resposta, "Obra-prima")
