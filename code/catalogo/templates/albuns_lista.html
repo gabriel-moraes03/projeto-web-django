@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - Álbuns{% endblock %}
+
+{% block conteudo %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+        <div>
+            <h1 class="h3 fw-bold mb-0">Álbuns</h1>
+            {% if page_obj %}
+                <p class="text-body-secondary small mb-0">{{ paginator.count }} álbu{{ paginator.count|pluralize:"m,ns" }} encontrado{{ paginator.count|pluralize }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="get" action="/albuns/" class="row g-2 mb-4 p-3 rounded-3 bg-body-tertiary border">
+        <div class="col-md-4">
+            <input type="search" name="q" value="{{ filtros.q }}" class="form-control" placeholder="Buscar por álbum ou artista">
+        </div>
+        <div class="col-md-2">
+            <select name="genero" class="form-select">
+                <option value="">Todos os gêneros</option>
+                {% for genero in generos %}
+                    <option value="{{ genero.pk }}" {% if filtros.genero == genero.pk|stringformat:"s" %}selected{% endif %}>{{ genero.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="artista" class="form-select">
+                <option value="">Todos os artistas</option>
+                {% for artista in artistas %}
+                    <option value="{{ artista.pk }}" {% if filtros.artista == artista.pk|stringformat:"s" %}selected{% endif %}>{{ artista.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="formato" class="form-select">
+                <option value="">Todos os formatos</option>
+                {% for valor, nome in formatos %}
+                    <option value="{{ valor }}" {% if filtros.formato == valor %}selected{% endif %}>{{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="ordem" class="form-select">
+                <option value="recentes" {% if filtros.ordem == "recentes" %}selected{% endif %}>Mais recentes</option>
+                <option value="titulo" {% if filtros.ordem == "titulo" %}selected{% endif %}>Título</option>
+                <option value="preco" {% if filtros.ordem == "preco" %}selected{% endif %}>Menor preço</option>
+                <option value="nota" {% if filtros.ordem == "nota" %}selected{% endif %}>Melhor nota</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button>
+            <a href="/albuns/" class="btn btn-outline-secondary">Limpar</a>
+        </div>
+    </form>
+
+    {% if albuns %}
+        <div class="row row-cols-2 row-cols-md-3 g-3">
+            {% for album in albuns %}
+                <div class="col">
+                    {% include "album_card.html" %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <nav class="mt-4" aria-label="Paginação">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?{{ querystring }}&page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                    {% endif %}
+                    <li class="page-item active"><span class="page-link">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span></li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?{{ querystring }}&page={{ page_obj.next_page_number }}">Próxima</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">Nenhum álbum encontrado com esses filtros.</div>
+    {% endif %}
+</div>
+{% endblock %}

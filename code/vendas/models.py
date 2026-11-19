@@ -12,6 +12,10 @@ class Carrinho(models.Model):
     def __str__(self):
         return f"Carrinho de {self.user.username}"
 
+    @property
+    def total(self):
+        return sum(item.subtotal for item in self.itens.select_related("produto"))
+
 
 class ItemCarrinho(models.Model):
     carrinho = models.ForeignKey(Carrinho, on_delete=models.CASCADE, related_name="itens")
@@ -25,6 +29,10 @@ class ItemCarrinho(models.Model):
 
     def __str__(self):
         return f"{self.quantidade}x {self.produto}"
+
+    @property
+    def subtotal(self):
+        return self.produto.preco * self.quantidade
 
 
 class Pedido(models.Model):
@@ -54,3 +62,7 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.quantidade}x {self.produto}"
+
+    @property
+    def subtotal(self):
+        return self.preco_unitario * self.quantidade

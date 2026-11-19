@@ -1,0 +1,1 @@
+<span class="badge {% if pedido.status == 'pendente' %}text-bg-warning{% elif pedido.status == 'pago' %}text-bg-info{% elif pedido.status == 'enviado' %}text-bg-success{% else %}text-bg-secondary{% endif %}">{{ pedido.get_status_display }}</span>
