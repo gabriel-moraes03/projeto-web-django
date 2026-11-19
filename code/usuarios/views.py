@@ -4,6 +4,7 @@ from django.contrib.auth import (
     login as login_django,
     logout as logout_django,
 )
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -12,7 +13,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .models import Perfil
+from .models import Endereco, Perfil
 
 
 def login_usuario(request):
@@ -150,3 +151,16 @@ def logout_usuario(request):
     )
 
     return redirect("login")
+
+
+@login_required
+def listar_enderecos(request):
+    enderecos = Endereco.objects.filter(
+        user=request.user
+    ).order_by("id")
+
+    return render(
+        request,
+        "enderecos_lista.html",
+        {"enderecos": enderecos}
+    )

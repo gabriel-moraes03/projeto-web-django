@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - Meus endereços{% endblock %}
+
+{% block conteudo %}
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <h1 class="h3 mb-4">
+                <i class="fa-solid fa-location-dot"></i>
+                Meus endereços
+            </h1>
+
+            {% if enderecos %}
+
+                <div class="row g-3">
+
+                    {% for endereco in enderecos %}
+
+                        <div class="col-md-6">
+
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+
+                                    <h2 class="h5 card-title">
+                                        Endereço {{ forloop.counter }}
+                                    </h2>
+
+                                    <p class="card-text mb-2">
+                                        {{ endereco.rua }},
+                                        {{ endereco.numero }}
+                                    </p>
+
+                                    {% if endereco.complemento %}
+                                        <p class="card-text mb-2">
+                                            {{ endereco.complemento }}
+                                        </p>
+                                    {% endif %}
+
+                                    <p class="card-text mb-2">
+                                        {{ endereco.bairro }}
+                                    </p>
+
+                                    <p class="card-text mb-2">
+                                        {{ endereco.cidade }}/{{ endereco.uf }}
+                                    </p>
+
+                                    <p class="card-text mb-0">
+                                        <strong>CEP:</strong>
+                                        {{ endereco.cep }}
+                                    </p>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info" role="alert">
+                    Você ainda não cadastrou nenhum endereço.
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
