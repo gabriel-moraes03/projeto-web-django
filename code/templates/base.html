@@ -21,7 +21,15 @@
             <div class="collapse navbar-collapse" id="menu-principal">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Início</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/albuns/">Álbuns</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="/carrinho/">Carrinho</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/pedidos/">Meus pedidos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/conta/enderecos/">Endereços</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                        <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav align-items-lg-center gap-2">
                     <li class="nav-item">
@@ -29,10 +37,15 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item"><span class="navbar-text">Usuário: {{ user.username }}</span></li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/logout">Sair</a></li>
+                        <li class="nav-item">
+                            <form method="post" action="/auth/logout/">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link nav-link">Sair</button>
+                            </form>
+                        </li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="/auth/login">Entrar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/cadastro">Cadastre-se</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/login/">Entrar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/cadastro/">Cadastre-se</a></li>
                     {% endif %}
                 </ul>
             </div>
