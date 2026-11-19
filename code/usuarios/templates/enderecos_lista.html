@@ -35,7 +35,7 @@
 
                             <div class="card shadow-sm h-100">
 
-                                <div class="card-body">
+                                <div class="card-body d-flex flex-column">
 
                                     <h2 class="h5 card-title">
                                         Endereço {{ forloop.counter }}
@@ -60,10 +60,22 @@
                                         {{ endereco.cidade }}/{{ endereco.uf }}
                                     </p>
 
-                                    <p class="card-text mb-0">
+                                    <p class="card-text mb-3">
                                         <strong>CEP:</strong>
                                         {{ endereco.cep }}
                                     </p>
+
+                                    <div class="mt-auto">
+
+                                        <a
+                                            href="{% url 'enderecos_editar' endereco.pk %}"
+                                            class="btn btn-outline-primary btn-sm"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                            Editar
+                                        </a>
+
+                                    </div>
 
                                 </div>
 
@@ -88,4 +100,3 @@
 
 </div>
 {% endblock %}
-

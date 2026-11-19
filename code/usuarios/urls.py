@@ -18,4 +18,10 @@ urlpatterns = [
         views.cadastrar_endereco,
         name="enderecos_novo"
     ),
+
+    path(
+        "conta/enderecos/<int:pk>/editar/",
+        views.editar_endereco,
+        name="enderecos_editar"
+    ),
 ]

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -193,4 +193,43 @@ def cadastrar_endereco(request):
         request,
         "enderecos_formulario.html",
         {"formulario": formulario}
+    )
+
+
+@login_required
+def editar_endereco(request, pk):
+    endereco = get_object_or_404(
+        Endereco,
+        pk=pk,
+        user=request.user
+    )
+
+    if request.method == "POST":
+        formulario = EnderecoForm(
+            request.POST,
+            instance=endereco
+        )
+
+        if formulario.is_valid():
+            formulario.save()
+
+            messages.success(
+                request,
+                "Endereço atualizado com sucesso!"
+            )
+
+            return redirect("enderecos_lista")
+
+    else:
+        formulario = EnderecoForm(
+            instance=endereco
+        )
+
+    return render(
+        request,
+        "enderecos_formulario.html",
+        {
+            "formulario": formulario,
+            "endereco": endereco
+        }
     )
