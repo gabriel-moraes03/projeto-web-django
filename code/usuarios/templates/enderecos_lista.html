@@ -65,7 +65,7 @@
                                         {{ endereco.cep }}
                                     </p>
 
-                                    <div class="mt-auto">
+                                    <div class="mt-auto d-flex gap-2">
 
                                         <a
                                             href="{% url 'enderecos_editar' endereco.pk %}"
@@ -74,6 +74,23 @@
                                             <i class="fa-solid fa-pen"></i>
                                             Editar
                                         </a>
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'enderecos_excluir' endereco.pk %}"
+                                            onsubmit="return confirm('Tem certeza de que deseja excluir este endereço?');"
+                                        >
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-outline-danger btn-sm"
+                                            >
+                                                <i class="fa-solid fa-trash"></i>
+                                                Excluir
+                                            </button>
+
+                                        </form>
 
                                     </div>
 

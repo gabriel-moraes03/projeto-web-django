@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -233,3 +234,30 @@ def editar_endereco(request, pk):
             "endereco": endereco
         }
     )
+
+
+@login_required
+@require_POST
+def excluir_endereco(request, pk):
+    endereco = get_object_or_404(
+        Endereco,
+        pk=pk,
+        user=request.user
+    )
+
+    try:
+        endereco.delete()
+
+    except ProtectedError:
+        messages.error(
+            request,
+            "Este endereço não pode ser excluído porque está vinculado a um pedido."
+        )
+
+    else:
+        messages.success(
+            request,
+            "Endereço excluído com sucesso!"
+        )
+
+    return redirect("enderecos_lista")
