@@ -13,6 +13,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
+from .forms import EnderecoForm
 from .models import Endereco, Perfil
 
 
@@ -163,4 +164,33 @@ def listar_enderecos(request):
         request,
         "enderecos_lista.html",
         {"enderecos": enderecos}
+    )
+
+
+@login_required
+def cadastrar_endereco(request):
+    if request.method == "POST":
+        formulario = EnderecoForm(request.POST)
+
+        if formulario.is_valid():
+            endereco = formulario.save(commit=False)
+
+            endereco.user = request.user
+
+            endereco.save()
+
+            messages.success(
+                request,
+                "Endereço cadastrado com sucesso!"
+            )
+
+            return redirect("enderecos_lista")
+
+    else:
+        formulario = EnderecoForm()
+
+    return render(
+        request,
+        "enderecos_formulario.html",
+        {"formulario": formulario}
     )

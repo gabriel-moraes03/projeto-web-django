@@ -12,4 +12,10 @@ urlpatterns = [
         views.listar_enderecos,
         name="enderecos_lista"
     ),
+
+    path(
+        "conta/enderecos/novo/",
+        views.cadastrar_endereco,
+        name="enderecos_novo"
+    ),
 ]
