@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - Cadastro{% endblock %}
+
+{% block conteudo %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h1 class="h3 text-center mb-4">
+                        Criar conta
+                    </h1>
+
+                    <form method="post" action="{% url 'cadastro' %}">
+
+                        {% csrf_token %}
+
+                        <!-- Nome de usuário -->
+                        <div class="mb-3">
+
+                            <label for="usuario" class="form-label">
+                                Nome de usuário
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="usuario"
+                                name="usuario"
+                                value="{{ request.POST.usuario }}"
+                                maxlength="150"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                        <!-- E-mail -->
+                        <div class="mb-3">
+
+                            <label for="email" class="form-label">
+                                E-mail
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                value="{{ request.POST.email }}"
+                                autocomplete="email"
+                            >
+
+                        </div>
+
+                        <!-- Telefone -->
+                        <div class="mb-3">
+
+                            <label for="telefone" class="form-label">
+                                Telefone
+                            </label>
+
+                            <input
+                                type="tel"
+                                class="form-control"
+                                id="telefone"
+                                name="telefone"
+                                value="{{ request.POST.telefone }}"
+                                maxlength="20"
+                                autocomplete="tel"
+                            >
+
+                        </div>
+
+                        <!-- Senha -->
+                        <div class="mb-3">
+
+                            <label for="senha" class="form-label">
+                                Senha
+                            </label>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="senha"
+                                name="senha"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <div class="form-text">
+                                Utilize uma senha que atenda aos requisitos
+                                de segurança do sistema.
+                            </div>
+
+                        </div>
+
+                        <!-- Confirmação de senha -->
+                        <div class="mb-4">
+
+                            <label for="confirmar_senha" class="form-label">
+                                Confirmar senha
+                            </label>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="confirmar_senha"
+                                name="confirmar_senha"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                        </div>
+
+                        <!-- Botão de cadastro -->
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Criar conta
+                        </button>
+
+                    </form>
+
+                    <p class="text-center mt-4 mb-0">
+                        Já possui uma conta?
+                        <a href="{% url 'login' %}">
+                            Entrar
+                        </a>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
