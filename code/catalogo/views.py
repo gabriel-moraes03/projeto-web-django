@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Avg, Exists, F, Min, OuterRef, Q
+from django.db.models import Avg, Count, Exists, F, Min, OuterRef, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.views.generic import DetailView, ListView, TemplateView
@@ -12,7 +12,14 @@ from .models import Album, Artista, Avaliacao, Genero, Produto
 def albuns_com_resumo():
     return (
         Album.objects.select_related("artista")
-        .prefetch_related("generos")
+        .prefetch_related(
+            "generos",
+            Prefetch(
+                "produtos",
+                queryset=Produto.objects.filter(ativo=True).order_by("preco"),
+                to_attr="produtos_ativos",
+            ),
+        )
         .annotate(
             preco_minimo=Min("produtos__preco", filter=Q(produtos__ativo=True)),
             nota_media=Avg("avaliacoes__nota"),
@@ -26,6 +33,12 @@ class PrincipalView(TemplateView):
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto["ultimos"] = albuns_com_resumo().order_by("-id")[:6]
+        contexto["mais_avaliados"] = (
+            albuns_com_resumo()
+            .filter(nota_media__isnull=False)
+            .order_by(F("nota_media").desc(), "titulo")[:4]
+        )
+        contexto["generos"] = Genero.objects.annotate(total=Count("albuns")).filter(total__gt=0).order_by("nome")
         return contexto
 
 

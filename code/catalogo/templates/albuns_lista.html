@@ -4,9 +4,16 @@
 
 {% block conteudo %}
 <div class="container py-4">
-    <h1 class="h3 mb-4">Álbuns</h1>
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+        <div>
+            <h1 class="h3 fw-bold mb-0">Álbuns</h1>
+            {% if page_obj %}
+                <p class="text-body-secondary small mb-0">{{ paginator.count }} álbu{{ paginator.count|pluralize:"m,ns" }} encontrado{{ paginator.count|pluralize }}</p>
+            {% endif %}
+        </div>
+    </div>
 
-    <form method="get" action="/albuns/" class="row g-2 mb-4">
+    <form method="get" action="/albuns/" class="row g-2 mb-4 p-3 rounded-3 bg-body-tertiary border">
         <div class="col-md-4">
             <input type="search" name="q" value="{{ filtros.q }}" class="form-control" placeholder="Buscar por álbum ou artista">
         </div>
@@ -43,13 +50,13 @@
             </select>
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button>
             <a href="/albuns/" class="btn btn-outline-secondary">Limpar</a>
         </div>
     </form>
 
     {% if albuns %}
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-2 row-cols-md-3 g-3">
             {% for album in albuns %}
                 <div class="col">
                     {% include "album_card.html" %}

@@ -4,11 +4,13 @@
 
 {% block conteudo %}
 <div class="container py-4">
-    <h1 class="h3 mb-4">Meu carrinho</h1>
+    <h1 class="h3 fw-bold mb-4"><i class="fa-solid fa-cart-shopping"></i> Meu carrinho</h1>
 
     {% if itens %}
-        <div class="table-responsive">
-            <table class="table align-middle">
+        <div class="row g-4">
+        <div class="col-lg-8">
+        <div class="table-responsive border rounded-3">
+            <table class="table align-middle mb-0">
                 <thead>
                     <tr>
                         <th>Produto</th>
@@ -45,22 +47,30 @@
                         </tr>
                     {% endfor %}
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="3" class="text-end">Total</th>
-                        <th class="text-end">R$ {{ total|floatformat:2 }}</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
             </table>
         </div>
-        <div class="d-flex justify-content-between">
-            <a href="/albuns/" class="btn btn-outline-secondary">Continuar comprando</a>
-            <a href="/carrinho/finalizar/" class="btn btn-primary">Finalizar compra</a>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 bg-body-tertiary">
+                <div class="card-body">
+                    <h2 class="h5 card-title">Resumo</h2>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total</span>
+                        <span class="preco-destaque text-success">R$ {{ total|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="/carrinho/finalizar/" class="btn btn-primary btn-lg">Finalizar compra</a>
+                        <a href="/albuns/" class="btn btn-outline-secondary">Continuar comprando</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     {% else %}
-        <div class="alert alert-info">
-            Seu carrinho está vazio. <a href="/albuns/" class="alert-link">Ver álbuns</a>
+        <div class="text-center py-5">
+            <i class="fa-solid fa-cart-shopping fa-3x text-body-secondary mb-3"></i>
+            <p class="lead">Seu carrinho está vazio.</p>
+            <a href="/albuns/" class="btn btn-primary">Ver álbuns</a>
         </div>
     {% endif %}
 </div>
