@@ -7,8 +7,25 @@
     <div class="container">
         <h1 class="display-4 fw-bold">Acervo Sonoro</h1>
         <p class="lead">Loja virtual de CDs e álbuns musicais. Encontre o disco que faltava na sua coleção.</p>
+        <a href="/albuns/" class="btn btn-primary btn-lg">Explorar o acervo</a>
     </div>
 </section>
+
+{% if ultimos %}
+<section class="container pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0">Novidades no acervo</h2>
+        <a href="/albuns/">Ver todos</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        {% for album in ultimos %}
+            <div class="col">
+                {% include "album_card.html" %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 <section class="container pb-5">
     <div class="row g-4">
