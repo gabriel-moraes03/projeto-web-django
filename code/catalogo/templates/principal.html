@@ -3,42 +3,110 @@
 {% block titulo %}Acervo Sonoro - Início{% endblock %}
 
 {% block conteudo %}
-<section class="hero text-center">
+<section class="hero-loja text-white" data-bs-theme="dark">
     <div class="container">
-        <h1 class="display-4 fw-bold">Acervo Sonoro</h1>
-        <p class="lead">Loja virtual de CDs e álbuns musicais. Encontre o disco que faltava na sua coleção.</p>
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge rounded-pill text-bg-warning mb-3">CD · Vinil · Digital</span>
+                <h1 class="display-5 fw-bold">Acervo Sonoro</h1>
+                <p class="lead mb-4">Loja virtual de CDs e álbuns musicais. Encontre o disco que faltava na sua coleção.</p>
+                <form method="get" action="/albuns/" class="mb-3" role="search">
+                    <div class="input-group input-group-lg">
+                        <input type="search" name="q" class="form-control" placeholder="Qual disco você procura?" aria-label="Buscar álbum ou artista">
+                        <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+                    </div>
+                </form>
+                <a href="/albuns/" class="btn btn-outline-light">Explorar o acervo <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+                <i class="fa-solid fa-record-vinyl disco-decorativo"></i>
+            </div>
+        </div>
     </div>
 </section>
 
-<section class="container pb-5">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 text-center card-destaque">
-                <div class="card-body">
-                    <i class="fa-solid fa-record-vinyl icone-destaque"></i>
-                    <h2 class="h5 card-title">Catálogo</h2>
-                    <p class="card-text">Navegue por artistas, gêneros e álbuns em CD, vinil e digital.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 text-center card-destaque">
-                <div class="card-body">
-                    <i class="fa-solid fa-cart-shopping icone-destaque"></i>
-                    <h2 class="h5 card-title">Carrinho e pedidos</h2>
-                    <p class="card-text">Monte seu carrinho, finalize a compra e acompanhe seus pedidos.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 text-center card-destaque">
-                <div class="card-body">
-                    <i class="fa-solid fa-star icone-destaque"></i>
-                    <h2 class="h5 card-title">Avaliações</h2>
-                    <p class="card-text">Dê sua nota aos álbuns e veja a opinião de outros clientes.</p>
-                </div>
-            </div>
+<section class="border-bottom bg-body-tertiary faixa-vantagens">
+    <div class="container py-3">
+        <div class="row row-cols-2 row-cols-md-4 g-3 text-center small">
+            <div class="col"><i class="fa-solid fa-record-vinyl text-primary d-block mb-1"></i>CD, vinil e digital</div>
+            <div class="col"><i class="fa-solid fa-truck-fast text-primary d-block mb-1"></i>Entrega para todo o Brasil</div>
+            <div class="col"><i class="fa-solid fa-lock text-primary d-block mb-1"></i>Compra segura</div>
+            <div class="col"><i class="fa-solid fa-star text-primary d-block mb-1"></i>Avaliações de clientes</div>
         </div>
     </div>
 </section>
+
+{% if generos %}
+<section class="container pt-4">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="fw-semibold me-1">Gêneros:</span>
+        {% for genero in generos %}
+            <a href="/albuns/?genero={{ genero.pk }}" class="badge rounded-pill border bg-body-tertiary text-body text-decoration-none fw-normal px-3 py-2 chip-genero">{{ genero.nome }}</a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if ultimos %}
+<section class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+            <h2 class="h4 titulo-secao mb-0">Novidades no acervo</h2>
+            <p class="text-body-secondary small mb-0">Os álbuns que acabaram de chegar</p>
+        </div>
+        <a href="/albuns/" class="btn btn-sm btn-outline-primary">Ver todos</a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-6 g-3">
+        {% for album in ultimos %}
+            <div class="col">
+                {% include "album_card.html" %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="container pb-4">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a href="/albuns/?formato=vinil" class="d-flex align-items-center justify-content-between rounded-3 p-4 text-white text-decoration-none banner-formato banner-vinil">
+                <div>
+                    <p class="text-uppercase small mb-1 opacity-75">Para colecionadores</p>
+                    <h2 class="h3 fw-bold mb-2">Discos de vinil</h2>
+                    <span class="btn btn-light btn-sm">Ver vinis</span>
+                </div>
+                <i class="fa-solid fa-record-vinyl icone-banner"></i>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="/albuns/?formato=cd&amp;ordem=preco" class="d-flex align-items-center justify-content-between rounded-3 p-4 text-white text-decoration-none banner-formato banner-cd">
+                <div>
+                    <p class="text-uppercase small mb-1 opacity-75">Clássicos com preço bom</p>
+                    <h2 class="h3 fw-bold mb-2">CDs com os menores preços</h2>
+                    <span class="btn btn-light btn-sm">Ver CDs</span>
+                </div>
+                <i class="fa-solid fa-compact-disc icone-banner"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% if mais_avaliados %}
+<section class="container pb-5">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+            <h2 class="h4 titulo-secao mb-0">Mais bem avaliados</h2>
+            <p class="text-body-secondary small mb-0">Os preferidos de quem já comprou</p>
+        </div>
+        <a href="/albuns/?ordem=nota" class="btn btn-sm btn-outline-primary">Ver ranking</a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-4 g-3">
+        {% for album in mais_avaliados %}
+            <div class="col">
+                {% include "album_card.html" %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 {% endblock %}

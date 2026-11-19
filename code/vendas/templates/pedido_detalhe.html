@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acervo Sonoro - Pedido #{{ pedido.pk }}{% endblock %}
+
+{% block conteudo %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/pedidos/">Meus pedidos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Pedido #{{ pedido.pk }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h1 class="h3 mb-1">Pedido #{{ pedido.pk }} {% include "pedido_status.html" %}</h1>
+            <p class="text-body-secondary mb-0">Feito em {{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
+        </div>
+        {% if pedido.status == "pendente" %}
+            <form method="post" action="/pedidos/{{ pedido.pk }}/cancelar/">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Cancelar pedido</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th class="text-end">Preço</th>
+                            <th class="text-center">Quantidade</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in itens %}
+                            <tr>
+                                <td>
+                                    <a href="/albuns/{{ item.produto.album.pk }}/">{{ item.produto.album.titulo }}</a>
+                                    <div class="small text-body-secondary">{{ item.produto.album.artista.nome }} · {{ item.produto.get_formato_display }}</div>
+                                </td>
+                                <td class="text-end">R$ {{ item.preco_unitario|floatformat:2 }}</td>
+                                <td class="text-center">{{ item.quantidade }}</td>
+                                <td class="text-end">R$ {{ item.subtotal|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Total</th>
+                            <th class="text-end">R$ {{ pedido.total|floatformat:2 }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 card-title">Endereço de entrega</h2>
+                    <p class="mb-0">
+                        {{ pedido.endereco.rua }}, {{ pedido.endereco.numero }}{% if pedido.endereco.complemento %} - {{ pedido.endereco.complemento }}{% endif %}<br>
+                        {{ pedido.endereco.bairro }} - {{ pedido.endereco.cidade }}/{{ pedido.endereco.uf }}<br>
+                        CEP {{ pedido.endereco.cep }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

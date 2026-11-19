@@ -64,6 +64,11 @@ class Faixa(models.Model):
     def __str__(self):
         return f"{self.numero}. {self.titulo}"
 
+    @property
+    def duracao_formatada(self):
+        minutos, segundos = divmod(self.duracao_segundos, 60)
+        return f"{minutos}:{segundos:02d}"
+
 
 class Produto(models.Model):
     FORMATOS = [
